@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1003092177396",
+    "firebase_url": "https://rentalcar-c2eaa.firebaseio.com",
+    "project_id": "rentalcar-c2eaa",
+    "storage_bucket": "rentalcar-c2eaa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003092177396:android:72db35b3ded2ee36",
+        "android_client_info": {
+          "package_name": "com.example.lou_g.carrental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1003092177396-qerv5rnm995j7dcgr88rq25ribsrctfa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR4wAhAMRjj04-64OD91HqOrzj3YbLcUE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
