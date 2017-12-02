@@ -2,11 +2,11 @@ package com.esprit.carrent.Activities;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,7 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.esprit.carrent.Fragments.ProfilManageFragment;
+import com.esprit.carrent.Fragments.ProfileFragment;
 import com.esprit.carrent.R;
+import com.esprit.carrent.Utils.SharedPrefManager;
 import com.facebook.FacebookSdk;
 
 import java.io.InputStream;
@@ -44,11 +46,6 @@ public class MainScreenDrawer extends AppCompatActivity
         String img = inBundle.getString("imageUrl");
         String username = inBundle.getString("username");
 
-        String id = inBundle.getString("id");
-
-
-        Fragment fr = new ProfilManageFragment();
-        fr.setArguments(inBundle);
 
 
 
@@ -72,7 +69,7 @@ public class MainScreenDrawer extends AppCompatActivity
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             TextView nomPrenomTxt = (TextView)headerView.findViewById(R.id.nomPrenom);
-            nomPrenomTxt.setText(""+username);
+            nomPrenomTxt.setText(SharedPrefManager.getInstance(this).getUsername());
             navigationView.setNavigationItemSelectedListener(this);
 
         }
@@ -98,6 +95,11 @@ public class MainScreenDrawer extends AppCompatActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -120,14 +122,49 @@ public class MainScreenDrawer extends AppCompatActivity
 
         if (id == R.id.profilebtn) {
             // Handle the camera action
+
+            Bundle inBundle = getIntent().getExtras();
+            String name = inBundle.getString("name");
+            String surnamename = inBundle.getString("surname");
+            String img = inBundle.getString("imageUrl");
+
+            Bundle pFr = new Bundle();
+            pFr.putString("name",name);
+            pFr.putString("surname",surnamename);
+            pFr.putString("imgProfile",img);
+
+
+            Fragment frP = new ProfileFragment();
+            frP.setArguments(pFr);
+            getFragmentManager().beginTransaction().replace(R.id.containerfr, frP).commit();
         } else if (id == R.id.reservationsbtn) {
 
         }
         else if (id == R.id.gerer) {
-            getFragmentManager().beginTransaction().add(R.id.containerfr, new ProfilManageFragment()).commit();
+
+            Bundle bndle ;
+            bndle = getIntent().getExtras();
+            String idU = bndle.getString("id");
+
+            Bundle inBundle = getIntent().getExtras();
+            String name = inBundle.getString("name");
+            String surnamename = inBundle.getString("surname");
+            String img = inBundle.getString("imageUrl");
+
+            Bundle bFr = new Bundle();
+            bFr.putString("idA",idU);
+            bFr.putString("name",name);
+            bFr.putString("surname",surnamename);
+            bFr.putString("imgProfile",img);
+            Fragment fr = new ProfilManageFragment();
+            fr.setArguments(bFr);
+            getFragmentManager().beginTransaction().add(R.id.containerfr, fr).commit();
 
         }
         else if (id == R.id.logoutdraw) {
+            SharedPrefManager.getInstance(this).logout();
+            finish();
+            startActivity(new Intent(this ,LoginActivity.class));
 
         }
 

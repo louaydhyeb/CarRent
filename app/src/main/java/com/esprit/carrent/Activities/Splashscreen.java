@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import com.esprit.carrent.R;
 
 public class Splashscreen extends Activity {
-    private static int SPLASH_TIME_OUT = 9000;
+    private static int SPLASH_TIME_OUT = 6000;
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Window window = getWindow();

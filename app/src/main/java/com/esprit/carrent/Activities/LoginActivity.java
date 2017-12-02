@@ -41,7 +41,7 @@ public class LoginActivity extends Activity {
 
     Button btnLogin;
     EditText user, passLogin;
-    TextView registrebtn;
+    Button registrebtn;
     private ProgressDialog progressDialog;
     private CallbackManager callBackManager;
     private AccessTokenTracker accessTokenTracker;
@@ -54,6 +54,12 @@ public class LoginActivity extends Activity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+        if(SharedPrefManager.getInstance(this).isLoggedin())
+        {
+            finish();
+            startActivity(new Intent(this , MainScreenDrawer.class));
+            return;
+        }
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken currentToken) {
@@ -83,7 +89,7 @@ public class LoginActivity extends Activity {
         btnLogin = (Button) findViewById(R.id.signinButton);
         user = (EditText) findViewById(R.id.usernameTxt);
         passLogin = (EditText) findViewById(R.id.passwordtxt);
-        registrebtn = (TextView) findViewById(R.id.txtRegister);
+        registrebtn = (Button) findViewById(R.id.txtRegister);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait ...");
@@ -104,7 +110,7 @@ public class LoginActivity extends Activity {
                             main.putExtra("name", currentProfile.getFirstName());
                             main.putExtra("surname", currentProfile.getLastName());
                             main.putExtra("email",currentProfile.getLinkUri().toString());
-                            main.putExtra("imageUrl", currentProfile.getProfilePictureUri(100,100).toString());
+                            main.putExtra("imageUrl", currentProfile.getProfilePictureUri(200,200).toString());
                             Verif = 1;
                             startActivity(main);
                             mProfileTracker.stopTracking();
@@ -118,7 +124,7 @@ public class LoginActivity extends Activity {
                     Intent main = new Intent(LoginActivity.this, MainScreenDrawer.class);
                     main.putExtra("name", profile.getFirstName());
                     main.putExtra("surname", profile.getLastName());
-                    main.putExtra("imageUrl", profile.getProfilePictureUri(100, 100).toString());
+                    main.putExtra("imageUrl", profile.getProfilePictureUri(200, 200).toString());
                     Verif =1;
                     startActivity(main);
                 }
@@ -198,6 +204,7 @@ public class LoginActivity extends Activity {
 
                                 Verif = 0 ;
                                 startActivity(i);
+                                finish();
 
                             } else {
                                 Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
