@@ -69,6 +69,8 @@ public class MainScreenDrawer extends AppCompatActivity
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             TextView nomPrenomTxt = (TextView)headerView.findViewById(R.id.nomPrenom);
+            ImageView a = (ImageView)headerView.findViewById(R.id.ImageProfile);
+            a.setVisibility(View.INVISIBLE);
             nomPrenomTxt.setText(SharedPrefManager.getInstance(this).getUsername());
             navigationView.setNavigationItemSelectedListener(this);
 
@@ -145,12 +147,10 @@ public class MainScreenDrawer extends AppCompatActivity
             Bundle bndle ;
             bndle = getIntent().getExtras();
             String idU = bndle.getString("id");
-
             Bundle inBundle = getIntent().getExtras();
             String name = inBundle.getString("name");
             String surnamename = inBundle.getString("surname");
             String img = inBundle.getString("imageUrl");
-
             Bundle bFr = new Bundle();
             bFr.putString("idA",idU);
             bFr.putString("name",name);
@@ -158,7 +158,7 @@ public class MainScreenDrawer extends AppCompatActivity
             bFr.putString("imgProfile",img);
             Fragment fr = new ProfilManageFragment();
             fr.setArguments(bFr);
-            getFragmentManager().beginTransaction().add(R.id.containerfr, fr).commit();
+            getFragmentManager().beginTransaction().replace(R.id.containerfr, fr).commit();
 
         }
         else if (id == R.id.logoutdraw) {

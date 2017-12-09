@@ -70,5 +70,8 @@ public class SharedPrefManager {
     public String getUserEmail(){SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USER_EMAIL,null);
     }
+    public int getUserId(){SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(KEY_USER_ID,0);
+    }
 
 }

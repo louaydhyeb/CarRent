@@ -82,19 +82,13 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent">
                     <TextView
+                        android:id="@+id/feedbackbtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cars"
+                        android:text="Feedbacks"
                         android:textSize="20sp"
                         />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:paddingTop="10dp"
-                        android:textColor="#000000"/>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -207,20 +201,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:text="Email here"/>
-
         </LinearLayout>
-        
     </LinearLayout>
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="196dp"
-        android:layout_height="46dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/buttonstylepink"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="0.03"
-        android:text="Cars"
-        android:textColor="#fff" />
-
 </LinearLayout>

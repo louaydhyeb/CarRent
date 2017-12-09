@@ -19,6 +19,8 @@ allprojects {
         maven {
             url "https://dl.bintray.com/glomadrian/maven"
         }
+        mavenCentral()
+        maven { url 'https://maven.google.com' }
     }
 }
 
