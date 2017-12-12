@@ -1,6 +1,7 @@
 package com.esprit.carrent.Fragments;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,7 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -56,6 +60,7 @@ public class FeedbackFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_feedback, container, false);
         getActivity().setTitle("FeedBacks");
         progDiag = new ProgressDialog(getActivity());
+
         fab_plus = (FloatingActionButton) v.findViewById(R.id.fab_plus);
         fab_addFeed = (FloatingActionButton) v.findViewById(R.id.fab_Add_Feedback);
         fab_addRate = (FloatingActionButton) v.findViewById(R.id.fab_Add_rate);
@@ -126,7 +131,7 @@ public class FeedbackFragment extends Fragment {
                                     };
 
                                     RequestHandler.getInstance(getActivity()).addToRequestQueue(stringRequest);
-                                    loadFeedbacks();
+                                    //loadFeedbacks();
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,6 +146,90 @@ public class FeedbackFragment extends Fragment {
                     });
 
                     fab_addRate.setClickable(true);
+                    fab_addRate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            final Dialog dialog = new Dialog(getActivity());
+                            dialog.setContentView(R.layout.ratingbar);
+                            dialog.setTitle("Vote");
+
+                            TextView txtV = (TextView)dialog.findViewById(R.id.rate_me);
+                            final RatingBar rt = (RatingBar)dialog.findViewById(R.id.ratingBar);
+                            StringRequest stringRequest2 = new StringRequest(
+                                    Request.Method.POST,
+                                    Constants.URL_SHOW_RATE,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+
+                                            try {
+                                                JSONObject obj = new JSONObject(response);
+                                                rt.setRating(Float.parseFloat(obj.getString("rate")));
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                            ) {
+                                @Override
+                                protected Map<String, String> getParams() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put("id_user1",String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUserId()) );
+                                    params.put("id_user2",String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUserId()) );
+                                    return params;
+                                }
+                            };
+                            RequestHandler.getInstance(getApplicationContext()).addToRequestQueue(stringRequest2);
+                            Button btnR = (Button)dialog.findViewById(R.id.submit);
+
+                            btnR.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_RATING ,
+                                            new Response.Listener<String>() {
+                                                @Override
+                                                public void onResponse(String response) {
+                                                    progDiag.dismiss();
+
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(response);
+                                                        Toast.makeText(getActivity(), jsonObject.getString("Ok Rate Done !!"), Toast.LENGTH_SHORT).show();
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            progDiag.hide();
+                                            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }) {
+                                        @Override
+                                        protected Map<String, String> getParams() throws AuthFailureError {
+                                            Map<String, String> params = new HashMap<>();
+                                            params.put("id_user1", String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUserId()));
+                                            params.put("id_user2",String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUserId()) );
+                                            params.put("value", String.valueOf(rt.getRating()));
+
+                                            return params;
+                                        }
+                                    };
+
+                                    RequestHandler.getInstance(getActivity()).addToRequestQueue(stringRequest);
+                                }
+                            });
+                            dialog.show();
+                        }
+                    });
                     isOpen = true;
                 }
             }
@@ -201,5 +290,6 @@ public class FeedbackFragment extends Fragment {
         };
         RequestHandler.getInstance(getActivity()).addToRequestQueue(stringRequest);
     }
+
 
 }

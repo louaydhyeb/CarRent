@@ -31,10 +31,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.esprit.carrent.Activities.LoginActivity;
-import com.esprit.carrent.Manifest;
 import com.esprit.carrent.R;
 import com.esprit.carrent.Utils.Constants;
 import com.esprit.carrent.Utils.RequestHandler;
+import com.esprit.carrent.Utils.SharedPrefManager;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -42,7 +42,6 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class ProfilManageFragment extends Fragment {
     private final int IMG_REQUEST = 1 ;
     public Bitmap bitmap ;
     Activity mActivity;;
-    private Uri path ;
+    public Uri path ;
     private static final int STORAGE_PERMISSION_CODE = 2342;
     int PLACE_PICKER_REQUEST = 1 ;
 
@@ -101,12 +100,12 @@ public class ProfilManageFragment extends Fragment {
             txtLast.setText(" "+surname);
 
         }
-       /* address.setOnClickListener(new View.OnClickListener() {
+        address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goPlacePicker(view);
             }
-        });*/
+        });
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,20 +139,24 @@ public class ProfilManageFragment extends Fragment {
 
     private String getPath(Uri uri){
         Cursor cursor = getActivity().getContentResolver().query(uri,null,null,null,null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
+        if (cursor !=null){
+            cursor.moveToFirst();
+            String document_id = cursor.getString(0);
 
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
+            document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+            cursor.close();
 
-        cursor = getActivity().getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,
-                MediaStore.Images.Media._ID + " = ?",new String[]{document_id},null
-        );
-        cursor.moveToFirst();
+            cursor = getActivity().getContentResolver().query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,
+                    MediaStore.Images.Media._ID + " = ?",new String[]{document_id},null
+            );
+            cursor.moveToFirst();
 
+
+        }
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         return path ;
+
     }
     private void InsertFacebook()
     {
@@ -224,7 +227,7 @@ public class ProfilManageFragment extends Fragment {
         final String Email = txtEmail.getText().toString().trim();
         final String Ph = phone.getText().toString().trim();
         final String Ad = address.getText().toString().trim();
-        final String id = getArguments().getString("idA");
+        //final String id = getArguments().getString("idA");
 
 
         progDiag.setMessage("Updating User ...");
@@ -252,7 +255,7 @@ public class ProfilManageFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("id",id);
+                params.put("id", String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUserId()));
                 params.put("lastname", Last);
                 params.put("firstname", First);
                 params.put("email", Email);
@@ -278,41 +281,37 @@ public class ProfilManageFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        if (requestCode == IMG_REQUEST && resultCode == RESULT_OK &&data!=null ){
+        if (requestCode == IMG_REQUEST && requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK &&data!=null ){
+                Place place = PlacePicker.getPlace(getActivity().getApplicationContext(),data);
+                if (place != null){
+                    address.setText(place.getAddress());
+                }
 
-           path = data.getData();
+            path = data.getData();
 
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(mActivity.getContentResolver(),path);
-                imgUp.setImageURI(path);
+                if (path !=null){
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),path);
+                    imgUp.setImageURI(path);
+
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-       /* if(requestCode == PLACE_PICKER_REQUEST){
-            if(resultCode == RESULT_OK){
-                Place place = PlacePicker.getPlace(mActivity.getApplicationContext(),data);
 
-                if (place != null){
-                    address.setText(place.getAddress().toString());
-                }
-
-            }
-        }*/
     }
-   /* public void goPlacePicker(View view){
+    public void goPlacePicker(View view){
 
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
         try {
             startActivityForResult(builder.build(getActivity()),PLACE_PICKER_REQUEST);
-        }catch (GooglePlayServicesRepairableException e){
-            e.printStackTrace();
-        }catch (GooglePlayServicesNotAvailableException e){
+        }catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e){
             e.printStackTrace();
         }
-    }*/
+    }
    public class DownloadImage extends AsyncTask<String,Void,Bitmap> {
        ImageView bmImmage;
        public DownloadImage(ImageView bmImmage){

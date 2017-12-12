@@ -50,6 +50,15 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
     public int getItemCount() {
         return feedbackList.size();
     }
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     class FeedbackViewHolder extends RecyclerView.ViewHolder {
 
